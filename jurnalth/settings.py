@@ -100,3 +100,6 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+
+TAILWIND_CLI_SRC_CSS = "static/css/main.css"
+ALLOWED_HOSTS = ["*"]

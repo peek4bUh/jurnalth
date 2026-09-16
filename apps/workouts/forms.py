@@ -15,10 +15,9 @@ INPUT_CLASS = (
 class WorkoutForm(forms.ModelForm):
     class Meta:
         model = Workout
-        fields = ("date", "notes")
+        fields = ("date",)
         widgets = {
             "date": forms.DateInput(attrs={"type": "date"}),
-            "notes": forms.Textarea(attrs={"rows": 3}),
         }
 
     def __init__(self, *args, **kwargs):

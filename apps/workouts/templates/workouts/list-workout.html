@@ -8,7 +8,7 @@
     <div class="overflow-hidden">
         <div>
             {% for workout in workouts %}
-            <div class="workout-record border-b border-gray-200 border-l-2 border-l-transparent px-4 py-4 transition-colors duration-200 last:border-b-0 hover:border-l-black hover:bg-gray-50 sm:px-5">
+            <div class="workout-record border-b border-gray-200 py-2 transition-colors duration-200 last:border-b-0 hover:border-l-black hover:bg-gray-50 sm:px-5">
                     <div class="flex items-center justify-between gap-4">
                         <time class="text-sm font-bold text-gray-600">{{ workout.date|date:'Y-m-d' }}</time>
                         <div class="flex items-center gap-1">
@@ -25,21 +25,14 @@
                         </div>
                     </div>
 
-                    <div id="workout-details-{{ workout.id }}" class="workout-details grid grid-rows-[0fr] opacity-0 transition-all duration-300" aria-hidden="true">
+                    <div id="workout-details-{{ workout.id }}" class="workout-details min-w-0 grid grid-rows-[0fr] opacity-0 transition-all duration-300" aria-hidden="true">
                         <div class="overflow-hidden">
-                            <div class="pt-4">
-                                <div class="overflow-x-auto">
-                                    <div class="min-w-xl space-y-2 text-sm text-gray-700">
-                                        {% for exercise in workout.exercises.all %}
-                                            <div class="whitespace-nowrap">{{ exercise.exercise_name }} / {{ exercise.volume }} / {{ exercise.rest|default:"-" }}</div>
-                                        {% endfor %}
-                                    </div>
+                            <div class="max-w-full min-w-0 overflow-x-auto">
+                                <div class="py-2 space-y-2 text-sm text-gray-700">
+                                    {% for exercise in workout.exercises.all %}
+                                        <div class="whitespace-nowrap">{{ exercise.exercise_name }} / {{ exercise.volume|default:"No volume data" }} / {{ exercise.rest|default:"-" }}</div>
+                                    {% endfor %}
                                 </div>
-                                {% if workout.notes %}
-                                <p class="mt-5 text-sm text-gray-700">
-                                    <span class="font-medium">Nota:</span> {{ workout.notes }}
-                                </p>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -61,6 +54,19 @@
                 const details = document.getElementById(toggle.getAttribute("aria-controls"));
                 const chevron = toggle.querySelector(".workout-chevron");
                 const isExpanded = toggle.getAttribute("aria-expanded") === "true";
+
+                if (!isExpanded) {
+                    document.querySelectorAll(".workout-toggle[aria-expanded='true']").forEach((openToggle) => {
+                        const openDetails = document.getElementById(openToggle.getAttribute("aria-controls"));
+                        const openChevron = openToggle.querySelector(".workout-chevron");
+
+                        openToggle.setAttribute("aria-expanded", "false");
+                        openDetails.setAttribute("aria-hidden", "true");
+                        openDetails.classList.replace("grid-rows-[1fr]", "grid-rows-[0fr]");
+                        openDetails.classList.replace("opacity-100", "opacity-0");
+                        openChevron.classList.remove("rotate-180");
+                    });
+                }
 
                 toggle.setAttribute("aria-expanded", String(!isExpanded));
                 details.setAttribute("aria-hidden", String(isExpanded));

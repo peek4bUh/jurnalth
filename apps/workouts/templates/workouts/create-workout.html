@@ -26,7 +26,7 @@
                     <h1 class="text-2xl sm:text-3xl font-semibold text-gray-950 tracking-tight">Jurnalth</h1>
                 </a>
                 <div class="mt-2 h-0.5 w-12 bg-gray-900"></div>
-                <p class="mt-2 text-xs sm:text-sm text-gray-500">{% if is_edit %}Update the date, notes, or exercises.{% else %}Add the exercises, volume, and rest for your training.{% endif %}</p>
+                <p class="mt-2 text-xs sm:text-sm text-gray-500">{% if is_edit %}Update current workout settings.{% else %}Add the exercises, volume, and rest for your training.{% endif %}</p>
             </header>
 
             <form method="post" class="space-y-6" novalidate id="workout-form" data-last-exercise-data-url="{% url 'last_exercise_data' 0 %}">
@@ -41,15 +41,10 @@
 
                 <section>
                     <div class="mt-5 grid gap-5 sm:grid-cols-2">
-                        <div>
+                        <div class="sm:col-span-2">
                             <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium text-gray-700">Date</label>
                             {{ form.date }}
                             {% for error in form.date.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700">Notes <span class="font-normal text-gray-400">(opcional)</span></label>
-                            {{ form.notes }}
-                            {% for error in form.notes.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
                         </div>
                     </div>
                 </section>
@@ -64,6 +59,7 @@
                                 <div class="flex items-center justify-between gap-4">
                                     <div class="min-w-0">
                                         <p class="exercise-summary-name truncate text-lg font-bold text-gray-900">{% if exercise_form.instance.exercise_name %}{{ exercise_form.instance.exercise_name }}{% else %}Choose an exercise{% endif %}</p>
+                                        <p class="last-volume mt-1 text-xs text-gray-500">{% if exercise_form.instance.exercise_name %}{{ exercise_form.volume.value|default:"No volume data" }}{% endif %}</p>
                                     </div>
                                     <div class="flex shrink-0 items-center gap-1">
                                         <button type="button" class="move-exercise-up px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors" title="Move exercise up" aria-label="Move exercise up">&uarr;</button>
@@ -120,6 +116,7 @@
                 <div class="flex items-center justify-between gap-4 mb-4">
                     <div class="min-w-0">
                         <p class="exercise-summary-name truncate text-lg font-bold text-gray-900">Choose an exercise</p>
+                        <p class="last-volume mt-1 text-xs text-gray-500"></p>
                     </div>
                     <div class="flex shrink-0 items-center gap-1">
                         <button type="button" class="move-exercise-up px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors" title="Move exercise up" aria-label="Move exercise up">&uarr;</button>
@@ -145,10 +142,14 @@
                         <button type="button" class="add-set mt-2 text-xs font-medium text-gray-600 hover:text-black">+ Add set</button>
                         <input type="hidden" name="exercises-__prefix__-volume" id="id_exercises-__prefix__-volume" maxlength="255">
                     </div>
+                    <div>
+                        <label for="id_exercises-__prefix__-rest" class="block text-xs font-medium uppercase tracking-wide text-gray-500">Rest</label>
+                        {{ exercise_formset.empty_form.rest }}
+                    </div>
                 </div>
             </div>
         </template>
 
-        <script src="{% static 'js/workout-form.js' %}?v=3"></script>
+        <script src="{% static 'js/workout-form.js' %}?v=5"></script>
     </body>
 </html>

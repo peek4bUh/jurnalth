@@ -59,7 +59,7 @@ def workout_edit(request, workout_id):
         exercise_formset = WorkoutExerciseFormSet(
             instance=workout, form_kwargs={'is_edit': True})
 
-    return render(request, 'workouts/create-workout.html', {
+    return render(request, 'workouts/edit-workout.html', {
         'form': form,
         'exercise_formset': exercise_formset,
         'is_edit': True,

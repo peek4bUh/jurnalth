@@ -10,22 +10,38 @@ async function fillLastExerciseData(select) {
     const row = select.closest(".exercise-row");
     const volumeInput = row.querySelector("input[name$='-volume']");
     const restInput = row.querySelector("input[name$='-rest']");
-    if (!select.value || !volumeInput || !restInput) return;
+    const lastVolumeElements = row.querySelectorAll(".last-volume");
+    if (!select.value || !volumeInput) {
+        lastVolumeElements.forEach((element) => {
+            element.textContent = "";
+        });
+        return;
+    }
+    lastVolumeElements.forEach((element) => {
+        element.textContent = "No volume data";
+    });
 
     try {
         const response = await fetch(
             lastExerciseDataUrl.replace("/0/", `/${select.value}/`));
-        if (!response.ok) return;
+        if (!response.ok) {
+            lastVolumeElements.forEach((element) => {
+                element.textContent = "No volume data";
+            });
+            return;
+        }
 
         const data = await response.json();
         volumeInput.value = data.volume;
-        restInput.value = data.rest;
-        row.querySelectorAll(".last-volume").forEach((element) => {
-            element.textContent = data.volume || "";
+        if (restInput) restInput.value = data.rest;
+        lastVolumeElements.forEach((element) => {
+            element.textContent = data.volume ? `${data.volume}` : "No volume data";
         });
         updateExerciseSummary(select.closest(".exercise-row"));
     } catch (error) {
-        return;
+        lastVolumeElements.forEach((element) => {
+            element.textContent = "No volume data";
+        });
     }
 }
 
@@ -35,8 +51,16 @@ function updateExerciseSummary(row) {
     const nameElement = row.querySelector(".exercise-summary-name");
     if (!nameElement) return;
 
-    if (exerciseField?.value && nameElement.textContent === "Choose an exercise") {
-        nameElement.textContent = `Exercise ${exerciseField.value}`;
+    const fieldName = exerciseField?.dataset?.name?.trim();
+    if (fieldName) {
+        nameElement.textContent = fieldName;
+        nameElement.dataset.exerciseName = fieldName;
+        return;
+    }
+
+    if (exerciseField?.value && nameElement.textContent.trim() === "Choose an exercise") {
+        nameElement.textContent = "Exercise selected";
+        nameElement.dataset.exerciseName = "";
     }
 }
 
@@ -78,21 +102,42 @@ function renumberForms() {
 
 function addSelectedExercise() {
     const params = new URLSearchParams(window.location.search);
-    const exerciseIds = params.getAll("exercise_id");
-    const exerciseNames = params.getAll("exercise_name");
-    if (!exerciseIds.length) return;
+    const urlExerciseIds = params.getAll("exercise_id");
+    const urlExerciseNames = params.getAll("exercise_name");
 
-    exerciseIds.forEach((exerciseId, index) => {
+    let savedSelection = [];
+    try {
+        savedSelection = JSON.parse(localStorage.getItem("jurnalth-selected-exercises") || "[]");
+    } catch (error) {
+        localStorage.removeItem("jurnalth-selected-exercises");
+    }
+
+    const selection = urlExerciseIds.length
+        ? urlExerciseIds.map((id, index) => ({ id, name: urlExerciseNames[index] || "" }))
+        : savedSelection;
+
+    const existingIds = [...formsContainer.querySelectorAll("[name$='-exercise']")]
+        .map((field) => String(field.value))
+        .filter(Boolean);
+
+    const validSelection = selection.filter((item) => item && item.id && !existingIds.includes(String(item.id)));
+    if (!validSelection.length) return;
+
+    validSelection.forEach(({ id, name }) => {
         const row = addEmptyRow();
 
         const exerciseField = row.querySelector("[name$='-exercise']");
-        exerciseField.value = exerciseId;
-        if (exerciseNames[index]) {
-            row.querySelector(".exercise-summary-name").textContent = exerciseNames[index];
+        exerciseField.value = id;
+        exerciseField.dataset.name = name || "";
+
+        if (name) {
+            row.querySelector(".exercise-summary-name").textContent = name;
         }
+
         updateExerciseSummary(row);
         fillLastExerciseData(exerciseField);
     });
+
     window.history.replaceState({}, document.title, window.location.pathname);
 }
 
@@ -112,11 +157,11 @@ function saveWorkoutState() {
         }));
     const names = [...formsContainer.querySelectorAll(".exercise-summary-name")]
         .map((element) => element.textContent.trim());
-    sessionStorage.setItem(workoutStateKey, JSON.stringify({ fields, names }));
+    localStorage.setItem(workoutStateKey, JSON.stringify({ fields, names }));
 }
 
 function restoreWorkoutState() {
-    const savedFields = sessionStorage.getItem(workoutStateKey);
+    const savedFields = localStorage.getItem(workoutStateKey);
     if (!savedFields) return;
 
     const savedState = JSON.parse(savedFields);
@@ -140,7 +185,7 @@ function restoreWorkoutState() {
         const nameElement = formsContainer.children[index]?.querySelector(".exercise-summary-name");
         if (nameElement && name) nameElement.textContent = name;
     });
-    sessionStorage.removeItem(workoutStateKey);
+    localStorage.removeItem(workoutStateKey);
 }
 
 addExerciseButton.addEventListener("click", (event) => {
@@ -220,6 +265,7 @@ formsContainer.addEventListener("input", (event) => {
 
 workoutForm.addEventListener("submit", () => {
     formsContainer.querySelectorAll(".exercise-row").forEach(syncVolumeFromSets);
+    localStorage.removeItem("jurnalth-selected-exercises");
 });
 
 restoreWorkoutState();
