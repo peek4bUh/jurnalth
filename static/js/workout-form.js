@@ -37,6 +37,7 @@ async function fillLastExerciseData(select) {
         lastVolumeElements.forEach((element) => {
             element.textContent = data.volume ? `${data.volume}` : "No volume data";
         });
+        populateSetsFromVolume(row);
         updateExerciseSummary(select.closest(".exercise-row"));
     } catch (error) {
         lastVolumeElements.forEach((element) => {
@@ -69,18 +70,52 @@ function syncVolumeFromSets(row) {
     if (!volumeInput) return;
 
     const sets = [...row.querySelectorAll(".set-row")].map((set) => {
+        const count = set.querySelector(".set-count").value.trim() || "1";
         const weight = set.querySelector(".set-weight").value.trim();
         const reps = set.querySelector(".set-reps").value.trim();
-        if (!weight && !reps) return "";
-        return `1x${weight || ""}x${reps || ""}`;
-    }).filter(Boolean);
-    if (sets.length) volumeInput.value = sets.join(", ");
+        return { count, reps, weight };
+    }).filter(({ reps, weight }) => reps || weight);
+
+    const volume = sets
+        .map(({ count, reps, weight }) => `${count}x${reps || ""}x${weight || ""}`)
+        .join(", ");
+    if (volume) volumeInput.value = volume;
     updateExerciseSummary(row);
 }
 
+function parseVolume(volume) {
+    return volume
+        .split(",")
+        .map((part) => part.trim().match(/^(\d+)x(\d+)x([\d.]+)$/))
+        .filter(Boolean)
+        .map((match) => ({ count: match[1], reps: match[2], weight: match[3] }));
+}
+
+function populateSetsFromVolume(row) {
+    const volumeInput = row.querySelector("input[name$='-volume']");
+    const setRows = row.querySelector(".set-rows");
+    if (!volumeInput || !setRows || !volumeInput.value.trim()) return;
+
+    const sets = parseVolume(volumeInput.value);
+    if (!sets.length) return;
+
+    setRows.innerHTML = "";
+    sets.forEach(({ count, reps, weight }) => {
+        setRows.insertAdjacentHTML("beforeend", `
+            <div class="set-row flex items-center gap-2 py-2 transition-colors hover:bg-gray-50">
+                <p class="w-12 shrink-0"><input type="number" min="1" value="${count}" class="set-count w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0"></p>
+                <p class="min-w-0 grow basis-0"><input type="number" min="1" value="${reps}" class="set-reps w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0"></p>
+                <p class="min-w-0 grow basis-0"><input type="number" step="0.5" value="${weight}" class="set-weight w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0"></p>
+                <p class="flex w-8 shrink-0 justify-center"><button type="button" class="remove-set inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-sm font-medium text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-900" title="Delete set" aria-label="Delete set">×</button></p>
+            </div>`);
+    });
+    renumberSets(row);
+}
+
 function renumberSets(row) {
-    row.querySelectorAll(".set-row").forEach((set, index) => {
-        set.querySelector(".set-number").textContent = index + 1;
+    row.querySelectorAll(".set-row").forEach((set) => {
+        const countInput = set.querySelector(".set-count");
+        if (countInput && !countInput.value) countInput.value = "1";
     });
 }
 
@@ -219,10 +254,10 @@ formsContainer.addEventListener("click", (event) => {
     if (event.target.classList.contains("add-set")) {
         const rows = row.querySelector(".set-rows");
         rows.insertAdjacentHTML("beforeend", `
-            <div class="set-row flex items-center py-2 transition-colors hover:bg-gray-50">
-                <p class="set-number w-12 shrink-0 text-sm text-gray-500"></p>
+            <div class="set-row flex items-center py-2 gap-2 transition-colors hover:bg-gray-50">
+                <p class="w-12 shrink-0"><input type="number" min="1" value="1" class="set-count w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0"></p>
                 <p class="min-w-0 grow basis-0"><input type="number" min="1" class="set-reps w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0"></p>
-                <p class="min-w-0 grow basis-0 px-2"><input type="number" step="0.5" class="set-weight w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0"></p>
+                <p class="min-w-0 grow basis-0"><input type="number" step="0.5" class="set-weight w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0"></p>
                 <p class="flex w-8 shrink-0 justify-center"><button type="button" class="remove-set inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-sm font-medium text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-900" title="Delete set" aria-label="Delete set">×</button></p>
             </div>`);
         renumberSets(row);
@@ -255,7 +290,7 @@ formsContainer.addEventListener("change", (event) => {
 });
 
 formsContainer.addEventListener("input", (event) => {
-    if (event.target.matches(".set-weight, .set-reps")) {
+    if (event.target.matches(".set-count, .set-weight, .set-reps")) {
         syncVolumeFromSets(event.target.closest(".exercise-row"));
     }
     if (event.target.matches("input[name$='-volume'], input[name$='-rest']")) {
@@ -270,4 +305,5 @@ workoutForm.addEventListener("submit", () => {
 
 restoreWorkoutState();
 renumberForms();
+formsContainer.querySelectorAll(".exercise-row").forEach(populateSetsFromVolume);
 addSelectedExercise();
