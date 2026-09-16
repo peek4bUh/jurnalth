@@ -56,16 +56,15 @@
                         <div class="exercise-row">
                             {% for hidden in exercise_form.hidden_fields %}{{ hidden }}{% endfor %}
                             {% if exercise_form.DELETE %}<div class="hidden">{{ exercise_form.DELETE }}</div>{% endif %}
-                            <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center justify-between mb-2">
                                 <div class="min-w-0">
                                     <p class="exercise-summary-name truncate text-lg font-bold text-gray-900">{% if exercise_form.instance.exercise_name %}{{ exercise_form.instance.exercise_name }}{% else %}Choose an exercise{% endif %}</p>
-                                    <p class="last-volume mt-1 text-xs text-gray-500">{% if exercise_form.instance.exercise_name %}{{ exercise_form.volume.value|default:"No volume data" }}{% endif %}</p>
                                 </div>
                                 <div class="flex shrink-0 items-center gap-1">
-                                    <button type="button" class="move-exercise-up px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors" title="Move exercise up" aria-label="Move exercise up">&uarr;</button>
-                                    <button type="button" class="move-exercise-down px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors" title="Move exercise down" aria-label="Move exercise down">&darr;</button>
-                                    <button type="button" class="toggle-exercise-edit px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-black" aria-expanded="true">Edit</button>
-                                    <button type="button" class="remove-exercise px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black" title="Delete exercise">Delete</button>
+                                    <button type="button" class="cursor-pointer move-exercise-up px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors" title="Move exercise up" aria-label="Move exercise up">&uarr;</button>
+                                    <button type="button" class="cursor-pointer move-exercise-down px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors" title="Move exercise down" aria-label="Move exercise down">&darr;</button>
+                                    <button type="button" class="cursor-pointer toggle-exercise-edit px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-black" aria-expanded="true">Edit</button>
+                                    <button type="button" class="cursor-pointer remove-exercise px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black" title="Delete exercise">Delete</button>
                                 </div>
                             </div>
                             <div class="exercise-edit-fields space-y-4">
@@ -82,7 +81,7 @@
                                             <p class="flex w-8 shrink-0 justify-center"><button type="button" class="remove-set inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-sm font-medium text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-900" title="Delete set" aria-label="Delete set">×</button></p>
                                         </div>
                                     </div>
-                                    <button type="button" class="add-set mt-2 text-xs font-medium text-gray-600 hover:text-black">+ Add set</button>
+                                    <button type="button" class="add-set mt-2 text-xs font-medium text-gray-600 hover:text-black">+ Add record</button>
                                     <div class="hidden">{{ exercise_form.volume }}</div>
                                 </div>
                                 <div>
@@ -116,7 +115,6 @@
             <div class="flex items-center justify-between gap-4 mb-4">
                 <div class="min-w-0">
                     <p class="exercise-summary-name truncate text-lg font-bold text-gray-900">Choose an exercise</p>
-                    <p class="last-volume mt-1 text-xs text-gray-500"></p>
                 </div>
                 <div class="flex shrink-0 items-center gap-1">
                     <button type="button" class="move-exercise-up px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors" title="Move exercise up" aria-label="Move exercise up">&uarr;</button>
@@ -139,7 +137,7 @@
                             <p class="flex w-8 shrink-0 justify-center"><button type="button" class="remove-set inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-sm font-medium text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-900" title="Delete set" aria-label="Delete set">×</button></p>
                         </div>
                     </div>
-                    <button type="button" class="add-set mt-2 text-xs font-medium text-gray-600 hover:text-black">+ Add set</button>
+                    <button type="button" class="add-set mt-2 text-xs font-medium text-gray-600 hover:text-black">+ Add record</button>
                     <input type="hidden" name="exercises-__prefix__-volume" id="id_exercises-__prefix__-volume" maxlength="255">
                 </div>
                 <div>
