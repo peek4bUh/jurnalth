@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 echo "Installing dependencies..."
-pip install -r requirements.txt
+python -m pip install --break-system-packages -r requirements.txt
 
-# Solo si usas django-tailwind
 echo "Installing Tailwind CSS..."
-python manage.py tailwind runserver
+python manage.py tailwind build --force
 
 echo "Collecting static files..."
 python manage.py collectstatic --noinput

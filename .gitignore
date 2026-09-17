@@ -8,6 +8,7 @@
 *.log
 *.pot
 *.pyc
+staticfiles/
 media
 
 # Python

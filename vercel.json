@@ -4,6 +4,7 @@
       "DJANGO_SETTINGS_MODULE": "jurnalth.settings"
     }
   },
+  "buildCommand": "bash vercel_build.sh",
   "builds": [
     {
       "src": "jurnalth/wsgi.py",
@@ -11,10 +12,12 @@
       "config": {
         "maxLambdaSize": "15mb"
       }
-    },
+    }
+  ],
+  "routes": [
     {
-      "src": "vercel_build.sh",
-      "use": "@vercel/static-build"
+      "src": "/(.*)",
+      "dest": "jurnalth/wsgi.py"
     }
   ]
 }
