@@ -1,11 +1,11 @@
-{% load static tailwind_cli %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jurnalth | Add workout</title>
-    {% tailwind_css %}
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
     <style>
         input[type="number"] {
             appearance: textfield;
