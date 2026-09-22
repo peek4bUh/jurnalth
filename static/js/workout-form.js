@@ -229,6 +229,16 @@ addExerciseButton.addEventListener("click", (event) => {
     window.location.href = addExerciseButton.href;
 });
 
+document.getElementById("today-button")?.addEventListener("click", () => {
+    const dateInput = document.getElementById("id_date");
+    if (!dateInput) return;
+
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    dateInput.value = `${today.getFullYear()}-${month}-${day}`;
+});
+
 formsContainer.addEventListener("click", (event) => {
     const row = event.target.closest(".exercise-row");
     if (!row) return;

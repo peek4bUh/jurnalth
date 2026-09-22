@@ -43,7 +43,10 @@
                     <div class="mt-5 grid gap-5 sm:grid-cols-2">
                         <div class="sm:col-span-2">
                             <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium text-gray-700">Date</label>
-                            {{ form.date }}
+                            <div class="flex items-center gap-2">
+                                {{ form.date }}
+                                <button type="button" id="today-button" class="shrink-0 rounded-sm border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-gray-900 hover:text-gray-900">Today</button>
+                            </div>
                             {% for error in form.date.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
                         </div>
                     </div>
