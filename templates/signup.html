@@ -1,0 +1,103 @@
+{% extends "layouts/auth-layout.html" %}
+
+{% block content %}
+    <div class="mb-8">
+        <p class="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">Start now</p>
+        <h2 class="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+            Create an account
+        </h2>
+        <p class="mt-3 text-sm text-slate-600">
+            Already have one?
+            <a href="{% url 'login' %}" class="font-semibold text-slate-900 underline decoration-slate-300 underline-offset-4 transition hover:text-slate-700">
+                Sign in
+            </a>
+        </p>
+    </div>
+
+    <form method="post" action="{% url 'signup' %}" class="space-y-5" novalidate>
+        {% csrf_token %}
+
+        {% if form and form.non_field_errors %}
+            <div class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {{ form.non_field_errors|join:", " }}
+            </div>
+        {% endif %}
+
+        <div>
+            <label for="username" class="mb-2 block text-sm font-medium text-slate-700">
+                Username
+            </label>
+            <input
+                id="username"
+                name="username"
+                type="text"
+                value="{% if form and form.username.value %}{{ form.username.value }}{% elif request.POST.username %}{{ request.POST.username }}{% endif %}"
+                required
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-200 {% if form and form.username.errors %}border-red-300 bg-red-50 focus:ring-red-100{% endif %}"
+                placeholder="Choose a username"
+            >
+            {% if form and form.username.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.username.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="email" class="mb-2 block text-sm font-medium text-slate-700">
+                Email address
+            </label>
+            <input
+                id="email"
+                name="email"
+                type="email"
+                value="{% if form and form.email.value %}{{ form.email.value }}{% elif request.POST.email %}{{ request.POST.email }}{% endif %}"
+                required
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-200 {% if form and form.email.errors %}border-red-300 bg-red-50 focus:ring-red-100{% endif %}"
+                placeholder="Enter your email address"
+            >
+            {% if form and form.email.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.email.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="password" class="mb-2 block text-sm font-medium text-slate-700">
+                Password
+            </label>
+            <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-200 {% if form and form.password.errors %}border-red-300 bg-red-50 focus:ring-red-100{% endif %}"
+                placeholder="Create a password"
+            >
+            {% if form and form.password.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.password.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="password_repeat" class="mb-2 block text-sm font-medium text-slate-700">
+                Repeat Password
+            </label>
+            <input
+                id="password_repeat"
+                name="password_repeat"
+                type="password"
+                required
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-200 {% if form and form.password_repeat.errors %}border-red-300 bg-red-50 focus:ring-red-100{% endif %}"
+                placeholder="Repeat your password"
+            >
+            {% if form and form.password_repeat.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.password_repeat.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <button
+            type="submit"
+            class="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
+        >
+            Create account
+        </button>
+    </form>
+{% endblock %}

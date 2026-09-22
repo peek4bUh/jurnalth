@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jurnalth{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-800">
+    <div class="relative isolate min-h-screen overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(15,118,110,0.22),_transparent_40%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.18),_transparent_35%)]"></div>
+
+        <div class="relative flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
+            <div class="w-full max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-white/95 shadow-[0_25px_80px_rgba(15,23,42,0.28)] backdrop-blur-xl">
+                <div class="grid lg:grid-cols-[1.08fr_0.92fr]">
+                    <div class="hidden lg:flex lg:flex-col lg:justify-between lg:bg-slate-900 lg:p-10">
+                        <div>
+                            <div class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-200">
+                                Jurnalth
+                            </div>
+                            <h1 class="mt-8 text-4xl font-semibold leading-tight text-white">
+                                Track your progress.<br>
+                                Build your routine.
+                            </h1>
+                        </div>
+
+                        <div class="space-y-4 text-sm text-slate-300">
+                            <div class="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">✓</span>
+                                <span>Log workouts in seconds</span>
+                            </div>
+                            <div class="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 text-sky-300">↗</span>
+                                <span>See what improves over time</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 sm:p-8 lg:p-10">
+                        <div class="mb-8 flex items-center justify-between">
+                            <a href="{% url 'login' %}" class="text-xl font-semibold tracking-tight text-slate-900">
+                                Jurnalth
+                            </a>
+                            <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
+                                App
+                            </span>
+                        </div>
+
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,10 +1,12 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import Exercise
 
 
+@login_required(login_url='login')
 def exercises_index(request):
     query = request.GET.get('q', '').strip()
     exercises = Exercise.objects.select_related('level').order_by('name')

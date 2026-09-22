@@ -15,8 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from django.urls import path
-from django.views.generic import TemplateView
 
 from apps.exercises.views import exercises_index
 from apps.workouts.views import (
@@ -26,10 +27,30 @@ from apps.workouts.views import (
     workouts_index,
     last_exercise_data,
 )
+from jurnalth.auth_views import (
+    forgot_password_view,
+    login_view,
+    logout_view,
+    signup_view,
+)
+
+
+@login_required(login_url='login')
+def index(request):
+    return render(request, 'index.html', {
+        'header_actions': [
+            {'route': 'logout', 'label': 'Logout'},
+        ],
+    })
 
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='index.html'), name='index'),
+    path('', index, name='index'),
+
+    path('login/', login_view, name='login'),
+    path('signup/', signup_view, name='signup'),
+    path('forgot-password/', forgot_password_view, name='forgotPassword'),
+    path('logout/', logout_view, name='logout'),
 
     path("admin/", admin.site.urls),
     path("exercises/", exercises_index, name="exercises_index"),

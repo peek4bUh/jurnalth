@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% include "header.html" %}
+    {% include "header.html" with actions=header_actions %}
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         {% include "components/menu-item.html" with path_name="exercises_index" title="Exercises" description="Browse and discover new exercises" %}
