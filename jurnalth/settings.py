@@ -112,17 +112,8 @@ USE_TZ = True
 TAILWIND_CLI_SRC_CSS = ".django_tailwind_cli/source.css"
 
 ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.getenv(
-        'ALLOWED_HOSTS',
-        '127.0.0.1,localhost, peek4buh.pythonanywhere.com',
-    ).split(',')
-    if host.strip()
+    '127.0.0.1',
+    'localhost',
+    'peek4buh.pythonanywhere.com',
 ]
 
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 3600
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True

@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.muscles.models import Muscle, MuscleGroup
+from apps.muscles.models import MuscleGroup
 
 
 class ExerciseLevel(models.Model):
@@ -81,11 +81,6 @@ class Exercise(models.Model):
 
     name = models.CharField(max_length=128, unique=True)
     description = models.CharField(max_length=255, blank=True, null=True)
-    target_muscle = models.ForeignKey(
-        Muscle,
-        on_delete=models.CASCADE,
-        related_name="exercises",
-    )
     level = models.ForeignKey(
         ExerciseLevel,
         on_delete=models.CASCADE,
@@ -126,45 +121,3 @@ class Exercise(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class ExerciseInstruction(models.Model):
-    class Meta:
-        db_table = "exercise_instruction"
-
-    exercise = models.ForeignKey(
-        Exercise,
-        on_delete=models.CASCADE,
-        related_name="instructions"
-    )
-    step = models.PositiveIntegerField()
-    description = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.exercise.name} - Step {self.step}"
-
-
-class ExerciseMuscle(models.Model):
-    class Meta:
-        db_table = "exercise_muscle"
-        unique_together = ('exercise', 'muscle')
-        ordering = ['role']
-
-    class MuscleRole(models.TextChoices):
-        SECONDARY = 'secondary'
-        TERTIARY = 'tertiary'
-
-    exercise = models.ForeignKey(
-        Exercise,
-        on_delete=models.CASCADE,
-        related_name='exercise_muscles'
-    )
-    muscle = models.ForeignKey(
-        Muscle,
-        on_delete=models.CASCADE,
-        related_name='muscle_exercises'
-    )
-    role = models.CharField(
-        max_length=20,
-        choices=MuscleRole.choices,
-    )

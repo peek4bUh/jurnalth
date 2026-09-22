@@ -7,8 +7,7 @@ from .models import Exercise
 
 def exercises_index(request):
     query = request.GET.get('q', '').strip()
-    exercises = Exercise.objects.select_related(
-        'target_muscle', 'level').order_by('name')
+    exercises = Exercise.objects.select_related('level').order_by('name')
     if query:
         exercises = exercises.filter(name__icontains=query)
 
