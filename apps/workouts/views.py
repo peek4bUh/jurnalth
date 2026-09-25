@@ -30,7 +30,9 @@ def workout_create(request):
             request.POST, form_kwargs={'is_edit': False})
         if form.is_valid() and exercise_formset.is_valid():
             with transaction.atomic():
-                workout = form.save()
+                workout = form.save(commit=False)
+                workout.user = request.user
+                workout.save()
                 exercise_formset.instance = workout
                 exercise_formset.save()
             return redirect('workouts_index')
