@@ -38,6 +38,7 @@ from jurnalth.auth_views import (
 @login_required(login_url='login')
 def index(request):
     return render(request, 'index.jinja2', {
+        'username': request.user.username,
         'header_actions': [
             {'route': 'logout', 'label': 'Logout'},
         ],

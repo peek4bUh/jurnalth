@@ -1,7 +1,7 @@
 {% extends "base.jinja2" %}
 
 {% block content %}
-  {% include "header.jinja2" with actions=header_actions %}
+  {% include "header.jinja2" with description=username actions=header_actions %}
 
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
     {% include "components/menu-item.jinja2" with path_name="exercises_index" title="Exercises" description="Browse and discover new exercises" %}
