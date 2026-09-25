@@ -11,7 +11,7 @@ from .models import Workout, WorkoutExercise
 
 @login_required(login_url='login')
 def workouts_index(request):
-    workouts = Workout.objects.prefetch_related('exercises').all()
+    workouts = Workout.objects.filter(user=request.user)
     actions = [
         {'route': 'workout_create', 'label': 'New'},
     ]
