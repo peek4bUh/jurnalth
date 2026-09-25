@@ -28,7 +28,8 @@ class SignupForm(forms.Form):
     username = forms.CharField(max_length=150, required=True)
     email = forms.EmailField(required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True)
-    password_repeat = forms.CharField(widget=forms.PasswordInput, required=True)
+    password_repeat = forms.CharField(
+        widget=forms.PasswordInput, required=True)
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -77,7 +78,7 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    return render(request, 'signin.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 
 def signup_view(request):

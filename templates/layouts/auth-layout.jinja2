@@ -1,0 +1,19 @@
+{% load tailwind_cli %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}{% endblock %}
+    </title>
+    {% tailwind_css %}
+  </head>
+  <body>
+    <main class="min-h-screen flex items-center justify-center px-4 sm:px-6 bg-gray-50">
+      <div class="w-full max-w-md p-6 sm:p-8 rounded-lg shadow-md bg-white border border-slate-300">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+{% extends "layouts/auth-layout.jinja2" %}
+
+{% block title %}Jurnalth | Login{% endblock %}
+
+{% block content %}
+  <div class="mb-8">
+    <h2 class="mb-10 text-3xl text-center font-bold tracking-tight text-slate-900">Sign in</h2>
+  </div>
+
+  <form method="post" action="{% url 'login' %}" class="space-y-6 mt-10" novalidate>
+    {% csrf_token %}
+
+    {% if form and form.non_field_errors %}
+      <div class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        {{ form.non_field_errors|join:", " }}
+      </div>
+    {% endif %}
+
+    <div>
+      <label for="username" class="mb-2 block text-sm font-medium text-slate-900">Username</label>
+      <input id="username"
+             name="username"
+             type="text"
+             value="{% if form and form.username.value %}{{ form.username.value }}{% elif request.POST.username %}{{ request.POST.username }}{% endif %}"
+             required
+             class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 text-sm
+                    {% if form and form.username.errors %}border-red-300 bg-red-50 focus:ring-red-100{% endif %}"
+             placeholder="Enter your username" />
+      {% if form and form.username.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.username.errors|join:", " }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="password" class="mb-2 block text-sm font-medium text-slate-900">Password</label>
+      <input id="password"
+             name="password"
+             type="password"
+             required
+             class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 text-sm
+                    {% if form and form.password.errors %}border-red-300 bg-red-50 focus:ring-red-100{% endif %}"
+             placeholder="Enter your password" />
+      {% if form and form.password.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.password.errors|join:", " }}</p>
+      {% endif %}
+    </div>
+
+    <div class="flex items-center justify-between">
+      <label class="flex items-center gap-3 text-sm text-slate-600">
+        <input id="remember_me"
+               name="remember_me"
+               type="checkbox"
+               class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500" />
+        Remember me
+      </label>
+      {% comment %} <a href="{% url 'forgotPassword' %}"
+      class="text-sm font-medium text-slate-600 transition hover:text-slate-900">Forgot password?</a> {% endcomment %}
+    </div>
+
+    <button type="submit"
+            class="cursor-pointer w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200">
+      Login
+    </button>
+
+    <p class="text-sm text-slate-600 text-center">
+      Don't have an account?
+      <a href="{% url 'signup' %}"
+         class="font-semibold text-slate-900 underline decoration-slate-300 underline-offset-4 transition hover:text-slate-700">
+        Sign up
+      </a>
+    </p>
+  </form>
+{% endblock %}
