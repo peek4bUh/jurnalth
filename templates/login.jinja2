@@ -45,6 +45,7 @@
       {% endif %}
     </div>
 
+    {% comment %}
     <div class="flex items-center justify-between">
       <label class="flex items-center gap-3 text-sm text-slate-600">
         <input id="remember_me"
@@ -53,9 +54,10 @@
                class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500" />
         Remember me
       </label>
-      {% comment %} <a href="{% url 'forgotPassword' %}"
-      class="text-sm font-medium text-slate-600 transition hover:text-slate-900">Forgot password?</a> {% endcomment %}
+       <a href="{% url 'forgotPassword' %}"
+      class="text-sm font-medium text-slate-600 transition hover:text-slate-900">Forgot password?</a>
     </div>
+    {% endcomment %}
 
     <button type="submit"
             class="cursor-pointer w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200">
