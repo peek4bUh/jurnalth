@@ -16,7 +16,7 @@ def workouts_index(request):
         {'route': 'workout_create', 'label': 'New'},
     ]
 
-    return render(request, 'workouts/list-workout.html', {
+    return render(request, 'workouts/list-workout.jinja2', {
         'workouts': workouts,
         'header_actions': actions,
     })
@@ -39,7 +39,7 @@ def workout_create(request):
         exercise_formset = WorkoutExerciseFormSet(
             form_kwargs={'is_edit': False})
 
-    return render(request, 'workouts/create-workout.html', {
+    return render(request, 'workouts/create-workout.jinja2', {
         'form': form,
         'exercise_formset': exercise_formset,
     })
@@ -63,7 +63,7 @@ def workout_edit(request, workout_id):
         exercise_formset = WorkoutExerciseFormSet(
             instance=workout, form_kwargs={'is_edit': True})
 
-    return render(request, 'workouts/edit-workout.html', {
+    return render(request, 'workouts/edit-workout.jinja2', {
         'form': form,
         'exercise_formset': exercise_formset,
         'is_edit': True,

@@ -1,0 +1,98 @@
+{% extends "base.jinja2" %}
+
+{% block title %}Jurnalth | Workout Log{% endblock %}
+
+{% block content %}
+  {% include "header.jinja2" with description="Your workout history" actions=header_actions %}
+
+  <div class="overflow-hidden">
+    <div>
+      {% for workout in workouts %}
+        <div class="workout-record border-b border-gray-200 py-2 transition-colors duration-200 last:border-b-0 hover:border-l-black hover:bg-gray-50 sm:px-5">
+          <div class="flex items-center justify-between gap-4">
+            <time class="text-sm font-bold text-gray-600">{{ workout.date|date:'Y-m-d' }}</time>
+            <div class="flex items-center gap-1">
+              <button type="button"
+                      class="workout-toggle cursor-pointer flex h-8 w-8 items-center justify-center rounded-sm text-gray-400 transition-all duration-200 hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                      aria-expanded="false"
+                      aria-controls="workout-details-{{ workout.id }}"
+                      aria-label="Toggle workout details">
+                <svg class="workout-chevron h-4 w-4 transition-transform duration-200"
+                     viewBox="0 0 20 20"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     aria-hidden="true">
+                  <path d="m5 7.5 5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <a href="{% url 'workout_edit' workout.id %}"
+                 class="rounded-sm px-2 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-950">Edit</a>
+              <form method="post"
+                    action="{% url 'workout_delete' workout.id %}"
+                    onsubmit="return confirm('Delete this workout?');"
+                    class="flex">
+                {% csrf_token %}
+                <button type="submit"
+                        class="cursor-pointer rounded-sm px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-950">Delete</button>
+              </form>
+            </div>
+          </div>
+
+          <div id="workout-details-{{ workout.id }}"
+               class="workout-details min-w-0 grid grid-rows-[0fr] opacity-0 transition-all duration-300"
+               aria-hidden="true">
+            <div class="overflow-hidden">
+              <div class="max-w-full min-w-0 overflow-x-auto">
+                <div class="py-2 space-y-2 text-sm text-gray-700">
+                  {% for exercise in workout.exercises.all %}
+                    <div class="whitespace-nowrap">{{ exercise.exercise_name }} / {{ exercise.volume|default:"No volume data" }} / {{ exercise.rest|default:"-" }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="px-5 py-12 text-center">
+          <p class="text-sm text-gray-500">No workouts registered yet.</p>
+          <a href="{% url 'workout_create' %}"
+             class="mt-3 inline-block text-sm font-medium text-gray-800 hover:text-black">Register the first one →</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block custom_scripts %}
+  <script>
+      document.querySelectorAll(".workout-toggle").forEach((toggle) => {
+          toggle.addEventListener("click", () => {
+              const details = document.getElementById(toggle.getAttribute("aria-controls"));
+              const chevron = toggle.querySelector(".workout-chevron");
+              const isExpanded = toggle.getAttribute("aria-expanded") === "true";
+
+              if (!isExpanded) {
+                  document.querySelectorAll(".workout-toggle[aria-expanded='true']").forEach((openToggle) => {
+                      const openDetails = document.getElementById(openToggle.getAttribute("aria-controls"));
+                      const openChevron = openToggle.querySelector(".workout-chevron");
+
+                      openToggle.setAttribute("aria-expanded", "false");
+                      openDetails.setAttribute("aria-hidden", "true");
+                      openDetails.classList.replace("grid-rows-[1fr]", "grid-rows-[0fr]");
+                      openDetails.classList.replace("opacity-100", "opacity-0");
+                      openChevron.classList.remove("rotate-180");
+                  });
+              }
+
+              toggle.setAttribute("aria-expanded", String(!isExpanded));
+              details.setAttribute("aria-hidden", String(isExpanded));
+              details.classList.toggle("grid-rows-[1fr]", !isExpanded);
+              details.classList.toggle("grid-rows-[0fr]", isExpanded);
+              details.classList.toggle("opacity-100", !isExpanded);
+              details.classList.toggle("opacity-0", isExpanded);
+              chevron.classList.toggle("rotate-180", !isExpanded);
+          });
+      });
+  </script>
+{% endblock %}

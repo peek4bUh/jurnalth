@@ -32,4 +32,4 @@ def exercises_index(request):
         'total_exercises': exercises.count(),
         'page_obj': page_obj,
     }
-    return render(request, 'exercises/list-exercise.html', context)
+    return render(request, 'exercises/list-exercise.jinja2', context)

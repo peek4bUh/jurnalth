@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jurnalth | Edit workout</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
+    <style>
+        input[type="number"] {
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            margin: 0;
+            -webkit-appearance: none;
+        }
+    </style>
+  </head>
+  <body class="min-h-screen font-sans text-gray-900">
+    <main class="max-w-4xl mx-auto px-4 py-6 sm:py-12">
+      <header class="mb-8">
+        <a href="{% url 'index' %}" class="hover:opacity-80 transition-opacity">
+          <h1 class="text-2xl sm:text-3xl font-semibold text-gray-950 tracking-tight">Jurnalth</h1>
+        </a>
+        <div class="mt-2 h-0.5 w-12 bg-gray-900"></div>
+        <p class="mt-2 text-xs sm:text-sm text-gray-500">Update current workout settings.</p>
+      </header>
+
+      <form method="post"
+            class="space-y-6"
+            novalidate
+            id="workout-form"
+            data-last-exercise-data-url="{% url 'last_exercise_data' 0 %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors or exercise_formset.non_form_errors %}
+          <div class="border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-800">
+            {{ form.non_field_errors }}
+            {{ exercise_formset.non_form_errors }}
+          </div>
+        {% endif %}
+
+        <section>
+          <div class="mt-5 grid gap-5 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="{{ form.date.id_for_label }}"
+                     class="block text-sm font-medium text-gray-700">Date</label>
+              <div class="flex items-center gap-2">
+                {{ form.date }}
+                <button type="button"
+                        id="today-button"
+                        class="shrink-0 rounded-sm border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-gray-900 hover:text-gray-900">Today</button>
+              </div>
+              {% for error in form.date.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+            </div>
+          </div>
+        </section>
+
+        <section>
+          {{ exercise_formset.management_form }}
+          <div id="exercise-forms" class="mt-5 space-y-4">
+            {% for exercise_form in exercise_formset %}
+              <div class="exercise-row">
+                {% for hidden in exercise_form.hidden_fields %}{{ hidden }}{% endfor %}
+                {% if exercise_form.DELETE %}<div class="hidden">{{ exercise_form.DELETE }}</div>{% endif %}
+                <div class="flex items-center justify-between mb-2">
+                  <div class="min-w-0">
+                    <p class="exercise-summary-name truncate text-lg font-bold text-gray-900">{% if exercise_form.instance.exercise_name %}{{ exercise_form.instance.exercise_name }}{% else %}Choose an exercise{% endif %}</p>
+                  </div>
+                  <div class="flex shrink-0 items-center gap-1">
+                    <button type="button"
+                            class="cursor-pointer move-exercise-up px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                            title="Move exercise up"
+                            aria-label="Move exercise up">↑</button>
+                    <button type="button"
+                            class="cursor-pointer move-exercise-down px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                            title="Move exercise down"
+                            aria-label="Move exercise down">↓</button>
+                    <button type="button"
+                            class="cursor-pointer toggle-exercise-edit px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-black"
+                            aria-expanded="true">Edit</button>
+                    <button type="button"
+                            class="cursor-pointer remove-exercise px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black"
+                            title="Delete exercise">Delete</button>
+                  </div>
+                </div>
+                <div class="exercise-edit-fields space-y-4">
+                  {{ exercise_form.exercise }}
+                  <div class="sm:col-span-full">
+                    <div class="flex items-center gap-2 text-xs uppercase tracking-wide text-gray-500">
+                      <p class="w-12 shrink-0">Sets</p>
+                      <p class="min-w-0 grow basis-0 text-left">Reps</p>
+                      <p class="min-w-0 grow basis-0 text-left">Weight (kg)</p>
+                      <p class="w-8 shrink-0"></p>
+                    </div>
+                    <div class="set-rows">
+                      <div class="set-row flex items-center py-2 transition-colors gap-2 hover:bg-gray-50">
+                        <p class="w-12 shrink-0">
+                          <input type="number"
+                                 min="1"
+                                 value="1"
+                                 class="set-count w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0" />
+                        </p>
+                        <p class="min-w-0 grow basis-0">
+                          <input type="number"
+                                 min="1"
+                                 class="set-reps w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0" />
+                        </p>
+                        <p class="min-w-0 grow basis-0">
+                          <input type="number"
+                                 step="0.5"
+                                 class="set-weight w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0" />
+                        </p>
+                        <p class="flex w-8 shrink-0 justify-center">
+                          <button type="button"
+                                  class="remove-set inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-sm font-medium text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-900"
+                                  title="Delete set"
+                                  aria-label="Delete set">×</button>
+                        </p>
+                      </div>
+                    </div>
+                    <button type="button"
+                            class="add-set mt-2 text-xs font-medium text-gray-600 hover:text-black">+ Add record</button>
+                    <div class="hidden">{{ exercise_form.volume }}</div>
+                  </div>
+                  <div>
+                    <label for="{{ exercise_form.rest.id_for_label }}"
+                           class="block text-xs font-medium uppercase tracking-wide text-gray-500">Rest</label>
+                    {{ exercise_form.rest }}
+                  </div>
+                </div>
+                {% for field in exercise_form.visible_fields %}
+                  {% for error in field.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+          <div class="mt-6 flex justify-center">
+            <a id="add-exercise"
+               href="{% url 'exercises_index' %}?mode=workout&workout_id={{ workout.pk }}"
+               class="inline-flex min-h-12 w-full max-w-sm items-center justify-center border-2 border-gray-900 px-5 py-3 text-base font-bold text-gray-900 transition-colors hover:bg-gray-100">
+              Add an exercise
+            </a>
+          </div>
+        </section>
+
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <a href="{% url 'workouts_index' %}"
+             class="rounded-md px-4 py-2.5 text-center text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">Cancel</a>
+          <button type="submit"
+                  class="rounded-sm cursor-pointer bg-gray-900 px-5 py-2.5 text-sm font-medium text-white">Guardar cambios</button>
+        </div>
+      </form>
+    </main>
+
+    <template id="empty-exercise-form">
+      <div class="exercise-row">
+        {% if exercise_formset.empty_form.DELETE %}<div class="hidden">{{ exercise_formset.empty_form.DELETE }}</div>{% endif %}
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <div class="min-w-0">
+            <p class="exercise-summary-name truncate text-lg font-bold text-gray-900">Choose an exercise</p>
+          </div>
+          <div class="flex shrink-0 items-center gap-1">
+            <button type="button"
+                    class="move-exercise-up px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                    title="Move exercise up"
+                    aria-label="Move exercise up">↑</button>
+            <button type="button"
+                    class="move-exercise-down px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                    title="Move exercise down"
+                    aria-label="Move exercise down">↓</button>
+            <button type="button"
+                    class="toggle-exercise-edit px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-black"
+                    aria-expanded="true">Edit</button>
+            <button type="button"
+                    class="remove-exercise px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-black"
+                    title="Delete exercise">Delete</button>
+          </div>
+        </div>
+        <div class="exercise-edit-fields">
+          {{ exercise_formset.empty_form.exercise }}
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-2 text-xs uppercase tracking-wide text-gray-500">
+              <p class="w-12 shrink-0">Sets</p>
+              <p class="min-w-0 grow basis-0 text-left">Reps</p>
+              <p class="min-w-0 grow basis-0 text-left">Weight (kg)</p>
+              <p class="w-8 shrink-0"></p>
+            </div>
+            <div class="set-rows">
+              <div class="set-row flex items-center py-2 transition-colors gap-2">
+                <p class="w-12 shrink-0">
+                  <input type="number"
+                         min="1"
+                         value="1"
+                         class="set-count w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0" />
+                </p>
+                <p class="min-w-0 grow basis-0">
+                  <input type="number"
+                         min="1"
+                         class="set-reps w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0" />
+                </p>
+                <p class="min-w-0 grow basis-0">
+                  <input type="number"
+                         step="0.5"
+                         class="set-weight w-full min-w-0 rounded-sm border border-gray-200 px-2 py-1.5 text-sm focus:border-gray-700 focus:outline-none focus:ring-0" />
+                </p>
+                <p class="flex w-8 shrink-0 justify-center">
+                  <button type="button"
+                          class="remove-set inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-sm font-medium text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-900"
+                          title="Delete set"
+                          aria-label="Delete set">×</button>
+                </p>
+              </div>
+            </div>
+            <button type="button"
+                    class="add-set mt-2 text-xs font-medium text-gray-600 hover:text-black">+ Add record</button>
+            <input type="hidden"
+                   name="exercises-__prefix__-volume"
+                   id="id_exercises-__prefix__-volume"
+                   maxlength="255" />
+          </div>
+          <div>
+            <label for="id_exercises-__prefix__-rest"
+                   class="block text-xs font-medium uppercase tracking-wide text-gray-500">Rest</label>
+            {{ exercise_formset.empty_form.rest }}
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script src="{% static 'js/workout-form.js' %}?v=5"></script>
+  </body>
+</html>
