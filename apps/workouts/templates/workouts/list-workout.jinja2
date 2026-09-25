@@ -1,10 +1,8 @@
-{% extends "base.jinja2" %}
+{% extends "layouts/app-layout.jinja2" %}
 
 {% block title %}Jurnalth | Workout Log{% endblock %}
 
-{% block content %}
-  {% include "header.jinja2" with description="Your workout history" actions=header_actions %}
-
+{% block app_content %}
   <div class="overflow-hidden">
     <div>
       {% for workout in workouts %}

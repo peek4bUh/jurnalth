@@ -1,10 +1,8 @@
-{% extends "base.jinja2" %}
+{% extends "layouts/app-layout.jinja2" %}
 
 {% block title %}Jurnalth | Exercise Library{% endblock %}
 
-{% block content %}
-  {% include "header.jinja2" with description="Your exercise library" actions=header_actions %}
-
+{% block app_content %}
   <form method="get" class="mb-2 flex gap-2">
     {% if add_to_workout %}<input type="hidden" name="mode" value="workout" />{% endif %}
     {% if request.GET.workout_id %}

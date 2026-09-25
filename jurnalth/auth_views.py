@@ -78,7 +78,7 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    return render(request, 'login.jinja2', {'form': form})
+    return render(request, 'auth/login.jinja2', {'form': form})
 
 
 def signup_view(request):
@@ -94,7 +94,7 @@ def signup_view(request):
     else:
         form = SignupForm()
 
-    return render(request, 'signup.jinja2', {'form': form})
+    return render(request, 'auth/signup.jinja2', {'form': form})
 
 
 def forgot_password_view(request):
