@@ -13,7 +13,7 @@ def exercises_index(request):
     if query:
         exercises = exercises.filter(name__icontains=query)
 
-    paginator = Paginator(exercises, 5)
+    paginator = Paginator(exercises, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
